@@ -10,11 +10,11 @@ import json
 st.title('Knowledge graph visualization')
 
 # Define list of selection options and sort alphabetically
-drug_list = os.listdir("data")
-drug_list.sort()
+options_list = os.listdir("data")
+options_list.sort()
 
 # Implement multiselect dropdown menu for option selection (returns a list)
-selected_graph = st.selectbox('Select graph to visualize', drug_list)
+selected_graph = st.selectbox('Select graph to visualize', options_list)
 if st.button('Show the graph'):
     with open("data/" + selected_graph, 'r') as f:
         graph_data = json.load(f)
@@ -48,4 +48,4 @@ if st.button('Show the graph'):
         HtmlFile = open(f'{path}/pyvis_graph.html', 'r', encoding='utf-8')
 
     # Load HTML file in HTML component for display on Streamlit page
-    components.html(HtmlFile.read(), height=800)
+    components.html(HtmlFile.read(), height=1000, width=1000)
