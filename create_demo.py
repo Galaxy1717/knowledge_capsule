@@ -25,26 +25,26 @@ if st.button('Show the graph'):
         docids = graph.nodes[node]["docids"]
         graph.nodes[node]["group"] = docids[0] if docids else -1000
     # Initiate PyVis network object
-    drug_net = Network(width="100%", bgcolor='#222222', font_color='white')
+    net = Network(width="100%", bgcolor='#222222', font_color='white')
 
     # Take Networkx graph and translate it to a PyVis graph format
-    drug_net.from_nx(graph)
+    net.from_nx(graph)
     # Generate network with specific layout settings
-    drug_net.repulsion(node_distance=420, central_gravity=0.33,
-                       spring_length=110, spring_strength=0.10,
-                       damping=0.95)
-    drug_net.show_buttons(filter_=['physics'])
+    net.repulsion(node_distance=420, central_gravity=0.33,
+                  spring_length=110, spring_strength=0.10,
+                  damping=0.95)
+    net.show_buttons(filter_=['physics'])
 
     # Save and read graph as HTML file (on Streamlit Sharing)
     try:
         path = '/tmp'
-        drug_net.save_graph(f'{path}/pyvis_graph.html')
+        net.save_graph(f'{path}/pyvis_graph.html')
         HtmlFile = open(f'{path}/pyvis_graph.html', 'r', encoding='utf-8')
 
     # Save and read graph as HTML file (locally)
     except Exception:
         path = '/html_files'
-        drug_net.save_graph(f'{path}/pyvis_graph.html')
+        net.save_graph(f'{path}/pyvis_graph.html')
         HtmlFile = open(f'{path}/pyvis_graph.html', 'r', encoding='utf-8')
 
     # Load HTML file in HTML component for display on Streamlit page
