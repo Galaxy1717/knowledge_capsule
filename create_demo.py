@@ -6,46 +6,62 @@ from networkx.readwrite import json_graph
 import os
 import json
 
-# Set header title
-st.title('Knowledge graph visualization')
+with open('data/adaptive_reco_mapping2.json', 'r') as f:
+    data_ref = json.load(f)
 
-# Define list of selection options and sort alphabetically
-options_list = os.listdir("data")
-options_list.sort()
+with open('data/adaptive_reco_mapping_notion2.json', 'r') as f:
+    data_notion = json.load(f)
+# Sample data
+references = list(data_ref.keys())
+notions = list(data_notion.keys())
 
-# Implement multiselect dropdown menu for option selection (returns a list)
-selected_graph = st.selectbox('Select graph to visualize', options_list)
-if st.button('Show the graph'):
-    with open("data/" + selected_graph, 'r') as f:
-        graph_data = json.load(f)
-    graph = json_graph.node_link_graph(graph_data)
-    for node in graph.nodes:
-        graph.nodes[node]["title"] = graph.nodes[node]["definition"]
-        graph.nodes[node]["size"] = len(graph.nodes[node]["aliases"]) + 3
-        docids = graph.nodes[node]["docids"]
-        graph.nodes[node]["group"] = docids[0] if docids else -1000
-    # Initiate PyVis network object
-    net = Network(width="100%", bgcolor='#222222', font_color='white')
 
-    # Take Networkx graph and translate it to a PyVis graph format
-    net.from_nx(graph)
-    # Generate network with specific layout settings
-    net.repulsion(node_distance=420, central_gravity=0.33,
-                  spring_length=110, spring_strength=0.10,
-                  damping=0.95)
-    net.show_buttons(filter_=['physics'])
+# Streamlit app
+st.title("'Adaptive v2' version graphe de connaissance")
 
-    # Save and read graph as HTML file (on Streamlit Sharing)
-    try:
-        path = '/tmp'
-        net.save_graph(f'{path}/pyvis_graph.html')
-        HtmlFile = open(f'{path}/pyvis_graph.html', 'r', encoding='utf-8')
+# Dropdown to select reference
+selected_reference = st.selectbox("Choix de la référence:", references + notions)
 
-    # Save and read graph as HTML file (locally)
-    except Exception:
-        path = '/html_files'
-        net.save_graph(f'{path}/pyvis_graph.html')
-        HtmlFile = open(f'{path}/pyvis_graph.html', 'r', encoding='utf-8')
+concept_keys = ["label", "definition"]
+exercise_keys = ["id", "question", "query", "statement", "answers", "distractors", "veracity", "feedback"]
 
-    # Load HTML file in HTML component for display on Streamlit page
-    components.html(HtmlFile.read(), height=1000, width=1000)
+# Display selected reference data
+if selected_reference:
+    if selected_reference in references:
+        data = data_ref
+    else:
+        data = data_notion
+    st.header("Synthèse d'information")
+    st.write(data[selected_reference]["synthesis"])
+
+    st.header("Concepts génératifs liés")
+    concept_collection = data[selected_reference]["concepts"]
+    new_collection = []
+    for concept_dict in concept_collection:
+        new_dic = {}
+        if concept_dict["score"] >= 8:
+            new_dic["score"] = concept_dict["score"]
+            new_concept = {}
+            for key in concept_keys:
+                if key in concept_dict["concept"]:
+                    new_concept[key] = concept_dict["concept"][key]
+            new_dic["concept"] = new_concept
+            new_collection.append(new_dic)
+    st.write(f"{len(new_collection)} concepts génératifs liés")
+    st.write(new_collection)
+
+    st.header("Exercices liés")
+    exercise_collection = data[selected_reference]["exercises"]
+    new_collection = []
+    for exercise_dict in exercise_collection:
+        new_dic = {}
+        if exercise_dict["score"] >= 7:
+            new_dic["score"] = exercise_dict["score"]
+            new_exercise = {}
+            for key in exercise_keys:
+                if key in exercise_dict["exercise"]:
+                    new_exercise[key] = exercise_dict["exercise"][key]
+            new_dic["exercise"] = new_exercise
+            new_collection.append(new_dic)
+    st.write(f"{len(new_collection)} exercices liés")
+    st.write(new_collection)
