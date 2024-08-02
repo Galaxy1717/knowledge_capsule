@@ -1,9 +1,5 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import networkx as nx
-from pyvis.network import Network
-from networkx.readwrite import json_graph
-import os
 import json
 
 with open('data/adaptive_reco_mapping2.json', 'r') as f:
