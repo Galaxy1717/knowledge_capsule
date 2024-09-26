@@ -4,6 +4,7 @@ import streamlit.components.v1 as components
 import json
 
 import torch
+import os
 from numpy import dot
 from numpy.linalg import norm
 from transformers import AutoTokenizer, AutoModel
@@ -13,9 +14,10 @@ import torch.nn.functional as F
 class StelliaE:
     """Encodes texts using the Stellia model."""
     def __init__(self, model_name: str = 'ProfessorBob/retrieval-mutli-1024'):
+        self.access_token = os.getenv('Hf_TOKEN', '')
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModel.from_pretrained(model_name).to(self.device)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name, token=self.access_token)
+        self.model = AutoModel.from_pretrained(model_name, token=self.access_token).to(self.device)
 
     @torch.no_grad()
     def encode(
