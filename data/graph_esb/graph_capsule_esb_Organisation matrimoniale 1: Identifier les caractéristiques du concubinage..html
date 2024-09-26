@@ -1,0 +1,178 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 600px;
+                 background-color: #222222;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"aliases": ["c94b39a5-4fbd-40dc-9559-71e6d6520522", "9a7265aa-44f5-4c42-814c-1cdf690aa799"], "corpus_id": null, "definition": "Le PACS (Pacte civil de solidarit\u00e9) est une forme d\u0027union l\u00e9gale en France qui permet \u00e0 deux personnes, ind\u00e9pendamment de leur sexe, d\u0027organiser leur vie commune. Les partenaires d\u0027un PACS b\u00e9n\u00e9ficient d\u0027avantages fiscaux sp\u00e9cifiques, tels qu\u0027une imposition commune au titre de l\u0027IFI et un r\u00e9gime fiscal particulier pour les donations, ainsi que certains droits successoraux similaires \u00e0 ceux du mariage.", "doc_ids": [2599], "font": {"color": "white"}, "generative": true, "group": 1, "id": "bccf5a45-210c-4dfc-92bd-19c23cbd6bce", "label": "PACS (Pacte civil de solidarit\u00e9)", "lang": "fr", "ref_concept_id": null, "shape": "dot", "size": 5, "title": "Le PACS (Pacte civil de solidarit\u00e9) est une forme d\u0027union l\u00e9gale en France qui permet \u00e0 deux personnes, ind\u00e9pendamment de leur sexe, d\u0027organiser leur vie commune. Les partenaires d\u0027un PACS b\u00e9n\u00e9ficient d\u0027avantages fiscaux sp\u00e9cifiques, tels qu\u0027une imposition commune au titre de l\u0027IFI et un r\u00e9gime fiscal particulier pour les donations, ainsi que certains droits successoraux similaires \u00e0 ceux du mariage.", "type": "concept", "valid": null, "wikientity": {"aliases": [], "content": null, "definition": "Le pacte civil de solidarit\u00e9 (d\u0027acronyme PACS, substantiv\u00e9 en \u00ab pacs \u00bb) est un partenariat civil du droit fran\u00e7ais et, avec le mariage, une des deux formes d\u0027union civile. Il a pour objet d\u0027organiser la vie commune de deux personnes majeures de sexe diff\u00e9rent ou de m\u00eame sexe (appel\u00e9es \u00ab partenaires \u00bb, ou plus commun\u00e9ment pacs\u00e9(e)s), en \u00e9tablissant entre eux des droits et des devoirs en termes de soutien mat\u00e9riel, de logement, de patrimoine, d\u0027imp\u00f4ts et de droits sociaux.\nPropos\u00e9 en 1990 sous le nom de \u00ab contrat de partenariat civil \u00bb, et apr\u00e8s une longue gestation, le pacs a \u00e9t\u00e9 instaur\u00e9 en 1999 par l\u0027article 515-1 du Code civil, sous le gouvernement Jospin, dans le but de \u00ab prendre en compte une partie des revendications des couples de m\u00eame sexe qui aspiraient \u00e0 une reconnaissance globale de leur statut, alors que la jurisprudence de la Cour de cassation refusait de regarder leur union comme un concubinage \u00bb.", "label": "Pacte civil de solidarit\u00e9", "page_id": "4277752", "thumbnail": null, "wikidata_id": "Q27249"}, "wordnetentity": null}, {"doc_id": "2599", "font": {"color": "white"}, "group": 2, "id": "2599", "label": "Essentiel de la Fiscalit\u00e9: Loi de Finances 2024", "name": "2bab607_essentiel-fiscalite-2024", "score": 2.4, "shape": "dot", "size": 8, "title": "2bab607_essentiel-fiscalite-2024", "top_minutes": [], "top_pages": [37, 38], "type": "document"}, {"aliases": ["e688d333-d588-46a3-9380-b4ecb364e726", "6a7528bc-2844-48a8-afc9-d167888c47a0"], "corpus_id": null, "definition": "Un compte bancaire collectif partag\u00e9 entre plusieurs cotitulaires, permettant des op\u00e9rations communes et impliquant des responsabilit\u00e9s financi\u00e8res partag\u00e9es. Tous les cotitulaires peuvent agir individuellement, m\u00eame apr\u00e8s le d\u00e9c\u00e8s de l\u0027un d\u0027eux. Ce type de compte perdure apr\u00e8s le d\u00e9c\u00e8s d\u0027un cotitulaire et peut inclure des clauses de solidarit\u00e9 entre les titulaires.", "doc_ids": [2603, 2611, 2630], "font": {"color": "white"}, "generative": true, "group": 1, "id": "8cd45f89-e877-4ddb-9096-657b1e3a759e", "label": "Compte joint", "lang": "fr", "ref_concept_id": null, "shape": "dot", "size": 5, "title": "Un compte bancaire collectif partag\u00e9 entre plusieurs cotitulaires, permettant des op\u00e9rations communes et impliquant des responsabilit\u00e9s financi\u00e8res partag\u00e9es. Tous les cotitulaires peuvent agir individuellement, m\u00eame apr\u00e8s le d\u00e9c\u00e8s de l\u0027un d\u0027eux. Ce type de compte perdure apr\u00e8s le d\u00e9c\u00e8s d\u0027un cotitulaire et peut inclure des clauses de solidarit\u00e9 entre les titulaires.", "type": "concept", "valid": null, "wikientity": null, "wordnetentity": null}, {"aliases": ["0a734609-d06d-42a3-8081-a2232d3f4417"], "corpus_id": null, "definition": "\u00c9tat juridique o\u00f9 plusieurs personnes d\u00e9tiennent ensemble des biens, sans division mat\u00e9rielle de ceux-ci, impliquant des r\u00e8gles strictes pour la gestion et l\u0027utilisation de ces biens.", "doc_ids": [2630], "font": {"color": "white"}, "generative": true, "group": 1, "id": "2db0eb5a-f051-4cd0-b746-1dd69536cff0", "label": "Indivision", "lang": "fr", "ref_concept_id": null, "shape": "dot", "size": 5, "title": "\u00c9tat juridique o\u00f9 plusieurs personnes d\u00e9tiennent ensemble des biens, sans division mat\u00e9rielle de ceux-ci, impliquant des r\u00e8gles strictes pour la gestion et l\u0027utilisation de ces biens.", "type": "concept", "valid": null, "wikientity": {"aliases": [], "content": null, "definition": "L\u0027indivision est un r\u00e9gime juridique permettant d\u0027exercer \u00e0 plusieurs le droit de propri\u00e9t\u00e9 en attente d\u0027un partage. Un bien est dit indivis /\u025b\u0303.di.vi/ lorsqu\u0027il appartient \u00e0 un ensemble de personnes, sans que l\u0027on puisse le r\u00e9partir en lots entre elles ou qu\u0027elles puissent en vendre leurs parts sans l\u0027accord des autres.\nUne autre d\u00e9finition est aussi possible : l\u0027indivision est le concours de plusieurs droits de m\u00eame nature sur un m\u00eame bien sans qu\u0027il y ait division mat\u00e9rielle des parts ; ainsi, le fait que, dans l\u0027usufruit, les droits des nu-propri\u00e9taires et ceux des usufruitiers ne soient pas de m\u00eame nature fait que les dispositions sur l\u0027indivision ne s\u0027appliquent pas \u00e0 leurs rapports.", "label": "Indivision", "page_id": "107977", "thumbnail": null, "wikidata_id": "Q875205"}, "wordnetentity": null}, {"aliases": ["921e9f25-84a2-423b-b728-4157e5be20af"], "corpus_id": null, "definition": "Syst\u00e8me fiscal dans lequel deux personnes, g\u00e9n\u00e9ralement un couple mari\u00e9 ou pacs\u00e9, d\u00e9clarent ensemble leurs revenus afin de b\u00e9n\u00e9ficier d\u0027avantages fiscaux potentiels, tels qu\u0027une imposition plus favorable.", "doc_ids": [2599], "font": {"color": "white"}, "generative": true, "group": 1, "id": "c7dbbb2e-d960-499b-b6c4-8832908da986", "label": "Imposition commune", "lang": "fr", "ref_concept_id": null, "shape": "dot", "size": 5, "title": "Syst\u00e8me fiscal dans lequel deux personnes, g\u00e9n\u00e9ralement un couple mari\u00e9 ou pacs\u00e9, d\u00e9clarent ensemble leurs revenus afin de b\u00e9n\u00e9ficier d\u0027avantages fiscaux potentiels, tels qu\u0027une imposition plus favorable.", "type": "concept", "valid": null, "wikientity": null, "wordnetentity": null}, {"aliases": ["30f69c99-6ce0-4a7f-9f15-a1b73e9043be", "df6e8b54-81a4-484d-bf08-9b79bba8157c"], "corpus_id": null, "definition": "Le foyer fiscal d\u00e9signe l\u0027ensemble des personnes vivant sous le m\u00eame toit et soumises \u00e0 l\u0027imp\u00f4t, dont les revenus sont d\u00e9clar\u00e9s ensemble pour le calcul de l\u0027imp\u00f4t. Il constitue ainsi une unit\u00e9 de d\u00e9claration fiscale regroupant une ou plusieurs personnes partageant des ressources financi\u00e8res communes, d\u00e9termin\u00e9e au 1er janvier de l\u0027ann\u00e9e d\u0027imposition.", "doc_ids": [2599, 2617, 2634], "font": {"color": "white"}, "generative": true, "group": 1, "id": "8a52d72c-d6b2-4872-850a-21f763594916", "label": "Foyer fiscal", "lang": "fr", "ref_concept_id": null, "shape": "dot", "size": 5, "title": "Le foyer fiscal d\u00e9signe l\u0027ensemble des personnes vivant sous le m\u00eame toit et soumises \u00e0 l\u0027imp\u00f4t, dont les revenus sont d\u00e9clar\u00e9s ensemble pour le calcul de l\u0027imp\u00f4t. Il constitue ainsi une unit\u00e9 de d\u00e9claration fiscale regroupant une ou plusieurs personnes partageant des ressources financi\u00e8res communes, d\u00e9termin\u00e9e au 1er janvier de l\u0027ann\u00e9e d\u0027imposition.", "type": "concept", "valid": null, "wikientity": {"aliases": [], "content": null, "definition": "La notion de foyer fiscal est utilis\u00e9e dans certains pays comme la France pour le calcul de l\u0027imp\u00f4t sur le revenu et de l\u0027imp\u00f4t sur la fortune immobili\u00e8re. Il consiste \u00e0 imposer non pas les individus isol\u00e9ment mais les m\u00e9nages qu\u0027ils composent.\nDepuis les ann\u00e9es 1970, le principe de la taxation s\u00e9par\u00e9e tend \u00e0 s\u0027imposer.", "label": "Foyer fiscal", "page_id": "80623", "thumbnail": null, "wikidata_id": "Q945036"}, "wordnetentity": null}]);
+                  edges = new vis.DataSet([{"from": "bccf5a45-210c-4dfc-92bd-19c23cbd6bce", "to": "2599", "width": 1}, {"from": "8cd45f89-e877-4ddb-9096-657b1e3a759e", "to": "2db0eb5a-f051-4cd0-b746-1dd69536cff0", "width": 1}, {"from": "c7dbbb2e-d960-499b-b6c4-8832908da986", "to": "2599", "width": 1}, {"from": "8a52d72c-d6b2-4872-850a-21f763594916", "to": "2599", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.33,
+            "damping": 0.95,
+            "nodeDistance": 420,
+            "springConstant": 0.1,
+            "springLength": 110
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
