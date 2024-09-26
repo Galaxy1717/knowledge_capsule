@@ -70,7 +70,7 @@ st.set_page_config(page_title="Demo Selector", layout="wide")
 
 # Create a sidebar selector
 st.sidebar.title("Navigation")
-demo = st.sidebar.radio("Choix de la démo:", ("Capsules HG 5ème", "Test Capsules ESB", "Recommendation de capsules"))
+demo = st.sidebar.radio("Choix de la démo:", ("Capsules HG 5ème", "Test Capsules ESB"))
 
 # Initialize the session state for 'selected_reference' if it doesn't exist
 if 'selected_reference' not in st.session_state:
@@ -247,34 +247,34 @@ if demo == "Test Capsules ESB":
             # Load HTML file in HTML component for display on Streamlit page
             components.html(HtmlFile.read(), height=1000, width=1000)
 
-if demo == "Recommendation de capsules":
-    if embedder is None:
-        embedder = StelliaE()
-        introductions = [data_ref[ref]["introduction"] for ref in references] + [data_notion[notion]["introduction"] for notion in notions]
-        ref_embedding = embedder.encode(introductions)
-        # mapping_ref_to_ref = {}
-        # for i, ref in enumerate(references + notions):
-        #     sim_scores = [dot(ref_embedding[i], ref_embedding[j])/(norm(ref_embedding[i])*norm(ref_embedding[j]))
-        #                   for j in range(len(ref_embedding))]
-        #     sorted_idx = sorted(range(len(sim_scores)), key=lambda x: sim_scores[x], reverse=True)
-        #     for index in sorted_idx:
-        #         if index != i and sim_scores[index] > 0.5:
-        #             if ref not in mapping_ref_to_ref:
-        #                 mapping_ref_to_ref[ref] = []
-                    # mapping_ref_to_ref[ref].append(references[index] if index < len(references) else notions[index - len(references)])
-    user_input = st.text_area("Enter your text here:")
+# if demo == "Recommendation de capsules":
+#     if embedder is None:
+#         embedder = StelliaE()
+#         introductions = [data_ref[ref]["introduction"] for ref in references] + [data_notion[notion]["introduction"] for notion in notions]
+#         ref_embedding = embedder.encode(introductions)
+#         # mapping_ref_to_ref = {}
+#         # for i, ref in enumerate(references + notions):
+#         #     sim_scores = [dot(ref_embedding[i], ref_embedding[j])/(norm(ref_embedding[i])*norm(ref_embedding[j]))
+#         #                   for j in range(len(ref_embedding))]
+#         #     sorted_idx = sorted(range(len(sim_scores)), key=lambda x: sim_scores[x], reverse=True)
+#         #     for index in sorted_idx:
+#         #         if index != i and sim_scores[index] > 0.5:
+#         #             if ref not in mapping_ref_to_ref:
+#         #                 mapping_ref_to_ref[ref] = []
+#                     # mapping_ref_to_ref[ref].append(references[index] if index < len(references) else notions[index - len(references)])
+#     user_input = st.text_area("Enter your text here:")
 
-    if user_input:
-        user_embedding = embedder.encode(user_input)[0]
-        # compute cosine similarity with np
-        sim_scores = [dot(ref_embedding[i], user_embedding)/(norm(ref_embedding[i])*norm(user_embedding))
-                      for i in range(len(ref_embedding))]
-        # sort by similarity
-        sorted_idx = sorted(range(len(sim_scores)), key=lambda x: sim_scores[x], reverse=True)
-        # display top 3
-        st.write("Capsules recommandées:")
-        for index in sorted_idx[:3]:
-            if sim_scores[index] > 0.4:
-                if st.button(references[index] if index < len(references) else notions[index - len(references)]):
-                    selected_reference = references[index] if index < len(references) else notions[index - len(references)]
-                    demo = "Capsules HG 5ème"
+#     if user_input:
+#         user_embedding = embedder.encode(user_input)[0]
+#         # compute cosine similarity with np
+#         sim_scores = [dot(ref_embedding[i], user_embedding)/(norm(ref_embedding[i])*norm(user_embedding))
+#                       for i in range(len(ref_embedding))]
+#         # sort by similarity
+#         sorted_idx = sorted(range(len(sim_scores)), key=lambda x: sim_scores[x], reverse=True)
+#         # display top 3
+#         st.write("Capsules recommandées:")
+#         for index in sorted_idx[:3]:
+#             if sim_scores[index] > 0.4:
+#                 if st.button(references[index] if index < len(references) else notions[index - len(references)]):
+#                     selected_reference = references[index] if index < len(references) else notions[index - len(references)]
+#                     demo = "Capsules HG 5ème"
