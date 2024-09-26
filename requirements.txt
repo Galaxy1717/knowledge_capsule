@@ -2,4 +2,5 @@ numpy==1.23.3
 pandas==1.4.4
 torch
 transformers
+distutils
 streamlit==1.12.2
